@@ -17,6 +17,7 @@ const KeypadContent = () => {
   const errorColor = searchParams.get('errorColor') || '#ff0000';
   const transparentBg = searchParams.get('transparentBg') === 'true';
   const keypadSize = parseInt(searchParams.get('keypadSize') || '100');
+  const background = searchParams.get('background') || 'Sfondo 1';
 
   return (
     <KeypadPreview 
@@ -31,6 +32,7 @@ const KeypadContent = () => {
       errorColor={errorColor}
       transparentBg={transparentBg}
       keypadSize={keypadSize}
+      background={background}
       isPreview={false}
     />
   );
