@@ -45,7 +45,7 @@ const AlphanumericKeypad: React.FC<AlphanumericKeypadProps> = ({ secretCode, cas
       <Row className="g-2" style={{ width: '300px' }}>
         {keys.map((key) => (
           <Col key={key} xs={2}>
-            <Button variant="light" className="w-100" onClick={() => handleKeyClick(key)} style={{ backgroundColor: 'var(--color-background-light)', color: 'var(--color-primary)', borderColor: 'var(--color-primary)' }}>
+            <Button variant="light" className="w-100" onClick={() => handleKeyClick(key)} style={{ backgroundColor: 'var(--color-background-light)', color: 'var(--color-text-light)', borderColor: 'var(--color-border)' }}>
               {key === ' ' ? 'Spazio' : key}
             </Button>
           </Col>
