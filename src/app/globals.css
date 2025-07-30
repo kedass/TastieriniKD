@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary: #ff8c00; /* Arancione principale */
-  --color-secondary: #ffa500; /* Arancione più chiaro per accenti */
-  --color-background-dark: #1a1a1a; /* Nero scuro per lo sfondo */
-  --color-background-light: #2a2a2a; /* Nero leggermente più chiaro per elementi */
-  --color-text-light: #f0f0f0; /* Testo chiaro */
-  --color-text-dark: #333333; /* Testo scuro (per elementi chiari) */
+  --color-primary: #FF8C00; /* Arancione vibrante */
+  --color-primary-dark: #CC7000; /* Arancione più scuro per hover/active */
+  --color-background-dark: #121212; /* Nero molto scuro */
+  --color-background-medium: #282828; /* Grigio scuro per pannelli */
+  --color-background-light: #3A3A3A; /* Grigio medio per input/bottoni */
+  --color-text-light: #F0F0F0; /* Testo chiaro */
+  --color-text-dark: #121212; /* Testo scuro (per elementi chiari) */
+  --color-border: #444444; /* Colore bordo sottile */
 }
 
 @theme inline {
@@ -18,20 +20,28 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background-dark: #1a1a1a;
-    --color-background-light: #2a2a2a;
-    --color-text-light: #f0f0f0;
-    --color-text-dark: #333333;
+    --color-background-dark: #121212;
+    --color-background-medium: #282828;
+    --color-background-light: #3A3A3A;
+    --color-text-light: #F0F0F0;
+    --color-text-dark: #121212;
   }
 }
 
 body {
   background: var(--color-background-dark);
   color: var(--color-text-light);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif; /* Useremo un font più moderno */
+  transition: background-color 0.3s ease;
 }
 
 /* Stili globali per i componenti Bootstrap */
+.btn {
+  border-radius: 8px; /* Bordi arrotondati */
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
 .btn-primary {
   background-color: var(--color-primary) !important;
   border-color: var(--color-primary) !important;
@@ -39,27 +49,53 @@ body {
 }
 
 .btn-primary:hover {
-  background-color: var(--color-secondary) !important;
-  border-color: var(--color-secondary) !important;
+  background-color: var(--color-primary-dark) !important;
+  border-color: var(--color-primary-dark) !important;
+  transform: translateY(-2px); /* Effetto leggero al passaggio del mouse */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombra */
+}
+
+.btn-warning,
+.btn-success {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text-dark) !important;
+}
+
+.btn-warning:hover,
+.btn-success:hover {
+  background-color: var(--color-primary-dark) !important;
+  border-color: var(--color-primary-dark) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .form-control,
 .form-select {
   background-color: var(--color-background-light) !important;
   color: var(--color-text-light) !important;
-  border-color: var(--color-primary) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 8px; /* Bordi arrotondati */
+  padding: 0.75rem 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-control:focus,
 .form-select:focus {
   background-color: var(--color-background-light) !important;
   color: var(--color-text-light) !important;
-  border-color: var(--color-secondary) !important;
+  border-color: var(--color-primary) !important;
   box-shadow: 0 0 0 0.25rem rgba(255, 140, 0, 0.25) !important;
 }
 
 .form-label {
   color: var(--color-text-light) !important;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.form-check-input {
+  border-color: var(--color-border) !important;
 }
 
 .form-check-input:checked {
@@ -69,10 +105,20 @@ body {
 
 .form-range::-webkit-slider-thumb {
   background-color: var(--color-primary) !important;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .form-range::-moz-range-thumb {
   background-color: var(--color-primary) !important;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .border {
@@ -80,9 +126,54 @@ body {
 }
 
 .text-dark {
-  color: var(--color-text-light) !important;
+  color: var(--color-text-light) !important; /* Per i link nel footer */
 }
 
 .text-light {
+  color: var(--color-text-light) !important; /* Per i link nel footer */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-primary);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+hr {
+  border-top: 1px solid var(--color-border);
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.container-fluid {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content {
+  background-color: var(--color-background-medium) !important;
   color: var(--color-text-light) !important;
+  border: 1px solid var(--color-primary) !important;
+  border-radius: 12px !important;
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+.modal-footer {
+  border-top: 1px solid var(--color-border) !important;
+}
+
+.modal-title {
+  color: var(--color-primary) !important;
+}
+
+.modal-body a {
+  color: var(--color-primary) !important;
+}
+
+.modal-body a:hover {
+  color: var(--color-primary-dark) !important;
 }
