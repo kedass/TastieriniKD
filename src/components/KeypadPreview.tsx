@@ -67,11 +67,27 @@ const KeypadPreview: React.FC<KeypadPreviewProps> = ({
         })(),
         backgroundSize: background === 'Pattern Dots' ? '20px 20px' : 'cover',
         backgroundPosition: 'center',
-        backgroundColor: background.startsWith('data:image') ? 'transparent' : (background === 'Sfondo Grigio Chiaro' ? '#f0f0f0' : (background === 'Sfondo Grigio Scuro' ? '#e0e0e0' : 'var(--color-background-dark)')),
+        backgroundColor: background.startsWith('data:image') ? 'transparent' : (background === 'Sfondo Grigio Chiaro' ? 'var(--color-background-light)' : (background === 'Sfondo Grigio Scuro' ? 'var(--color-background-medium)' : 'var(--color-background-dark)')),
         transform: `scale(${keypadSize / 100})`,
         transformOrigin: 'top left',
+        position: 'relative', /* Aggiunto per posizionare il watermark */
       }}
     >
+      {/* Watermark TastieriniKD */}
+      <div 
+        style={{
+          position: 'absolute',
+          bottom: '10px',
+          right: '10px',
+          fontSize: '0.8em',
+          color: 'rgba(255, 140, 0, 0.3)', /* Arancione semitrasparente */
+          pointerEvents: 'none', /* Non interferisce con i click */
+          zIndex: 100, /* Assicura che sia sopra gli altri elementi */
+        }}
+      >
+        TastieriniKD
+      </div>
+
       {isPreview && <h3 style={{ color: 'var(--color-primary)' }}>Anteprima</h3>}
       
       {question && <p className="text-center" style={{ color: 'var(--color-text-light)' }}>{question}</p>}
