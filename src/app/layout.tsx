@@ -39,7 +39,7 @@ export default function RootLayout({
               <Link href="/legal/cookies" className="text-light">Cookie Policy</Link>
             </section>
           </div>
-          <div className="text-center p-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)' }}>
+          <div className="text-center p-3" style={{ backgroundColor: 'var(--color-background-dark)' }}>
             © 2025 TastieriniKD
           </div>
         </footer>
