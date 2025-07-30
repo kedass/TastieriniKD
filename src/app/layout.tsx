@@ -31,7 +31,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
-        <footer className="bg-dark text-center text-lg-start mt-auto py-3" style={{ color: 'var(--foreground)' }}>
+        <footer className="text-center text-lg-start mt-auto py-3" style={{ backgroundColor: 'var(--color-background-medium)', color: 'var(--color-text-light)' }}>
           <div className="container p-4">
             <section className="mb-4">
               <Link href="/legal/privacy" className="text-light me-4">Privacy Policy</Link>
