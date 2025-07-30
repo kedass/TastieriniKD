@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import Link from 'next/link';
+import ConsentBanner from '@/components/ConsentBanner';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,18 +31,19 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
-        <footer className="bg-light text-center text-lg-start mt-auto py-3">
+        <footer className="bg-dark text-center text-lg-start mt-auto py-3" style={{ color: 'var(--foreground)' }}>
           <div className="container p-4">
             <section className="mb-4">
-              <Link href="/legal/privacy" className="text-dark me-4">Privacy Policy</Link>
-              <Link href="/legal/terms" className="text-dark me-4">Termini di Servizio</Link>
-              <Link href="/legal/cookies" className="text-dark">Cookie Policy</Link>
+              <Link href="/legal/privacy" className="text-light me-4">Privacy Policy</Link>
+              <Link href="/legal/terms" className="text-light me-4">Termini di Servizio</Link>
+              <Link href="/legal/cookies" className="text-light">Cookie Policy</Link>
             </section>
           </div>
-          <div className="text-center p-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
+          <div className="text-center p-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)' }}>
             © 2025 TastieriniKD
           </div>
         </footer>
+        <ConsentBanner />
       </body>
     </html>
   );
