@@ -15,6 +15,7 @@ interface KeypadPreviewProps {
   errorMessage: string;
   errorColor: string;
   transparentBg: boolean;
+  keypadSize: number;
 }
 
 const KeypadPreview: React.FC<KeypadPreviewProps> = ({ 
@@ -28,6 +29,7 @@ const KeypadPreview: React.FC<KeypadPreviewProps> = ({
   errorMessage, 
   errorColor, 
   transparentBg, 
+  keypadSize, 
   isPreview = true
 }) => {
   const [feedback, setFeedback] = useState({ message: '', color: '' });
@@ -43,7 +45,19 @@ const KeypadPreview: React.FC<KeypadPreviewProps> = ({
   };
 
   return (
-    <div className="border rounded p-4" style={{ minHeight: '400px', fontFamily: font }}>
+    <div 
+      className="border rounded p-4"
+      style={{
+        minHeight: '400px',
+        fontFamily: font,
+        backgroundImage: background.startsWith('data:image') ? `url(${background})` : '',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundColor: background.startsWith('data:image') ? 'transparent' : (background === 'Sfondo 1' ? '#f0f0f0' : '#e0e0e0'),
+        transform: `scale(${keypadSize / 100})`,
+        transformOrigin: 'top left',
+      }}
+    >
       {isPreview && <h3>Anteprima</h3>}
       
       {question && <p className="text-center">{question}</p>}
