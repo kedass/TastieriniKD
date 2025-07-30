@@ -30,6 +30,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <header className="py-3 px-4 bg-background-medium shadow-md">
+          <h1 className="text-primary text-2xl font-bold">TastieriniKD</h1>
+        </header>
         {children}
         <footer className="text-center text-lg-start mt-auto py-3" style={{ backgroundColor: 'var(--color-background-medium)', color: 'var(--color-text-light)' }}>
           <div className="container p-4">
