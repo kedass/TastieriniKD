@@ -1,26 +1,88 @@
 @import "tailwindcss";
 
 :root {
-  --background: #1a1a1a; /* Nero scuro */
-  --foreground: #ff8c00; /* Arancione */
+  --color-primary: #ff8c00; /* Arancione principale */
+  --color-secondary: #ffa500; /* Arancione più chiaro per accenti */
+  --color-background-dark: #1a1a1a; /* Nero scuro per lo sfondo */
+  --color-background-light: #2a2a2a; /* Nero leggermente più chiaro per elementi */
+  --color-text-light: #f0f0f0; /* Testo chiaro */
+  --color-text-dark: #333333; /* Testo scuro (per elementi chiari) */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--color-background-dark);
+  --color-foreground: var(--color-primary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #1a1a1a;
-    --foreground: #ff8c00;
+    --color-background-dark: #1a1a1a;
+    --color-background-light: #2a2a2a;
+    --color-text-light: #f0f0f0;
+    --color-text-dark: #333333;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-background-dark);
+  color: var(--color-text-light);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Stili globali per i componenti Bootstrap */
+.btn-primary {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text-dark) !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-secondary) !important;
+  border-color: var(--color-secondary) !important;
+}
+
+.form-control,
+.form-select {
+  background-color: var(--color-background-light) !important;
+  color: var(--color-text-light) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--color-background-light) !important;
+  color: var(--color-text-light) !important;
+  border-color: var(--color-secondary) !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 140, 0, 0.25) !important;
+}
+
+.form-label {
+  color: var(--color-text-light) !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.form-range::-webkit-slider-thumb {
+  background-color: var(--color-primary) !important;
+}
+
+.form-range::-moz-range-thumb {
+  background-color: var(--color-primary) !important;
+}
+
+.border {
+  border-color: var(--color-primary) !important;
+}
+
+.text-dark {
+  color: var(--color-text-light) !important;
+}
+
+.text-light {
+  color: var(--color-text-light) !important;
 }
