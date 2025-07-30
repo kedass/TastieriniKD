@@ -16,23 +16,31 @@ interface KeypadPreviewProps {
   errorColor: string;
   transparentBg: boolean;
   keypadSize: number;
-  background: string;
+  backgroundType: string; /* Nuovo nome per il tipo di sfondo */
+  backgroundColor1: string; /* Colore 1 per sfondi */
+  backgroundColor2: string; /* Colore 2 per gradienti */
+  backgroundImage: string; /* Data URL per immagine */
+  questionTransparentBg: boolean; /* Sfondo trasparente per la domanda */
 }
 
-const KeypadPreview: React.FC<KeypadPreviewProps> = ({ 
-  keypadType, 
-  question, 
-  font, 
-  secretCode, 
-  caseSensitive, 
-  successMessage, 
-  successColor, 
-  errorMessage, 
-  errorColor, 
-  transparentBg, 
-  keypadSize, 
-  background, 
-  isPreview = true
+const KeypadPreview: React.FC<KeypadPreviewProps> = ({
+  keypadType,
+  question,
+  font,
+  secretCode,
+  caseSensitive,
+  successMessage,
+  successColor,
+  errorMessage,
+  errorColor,
+  transparentBg,
+  keypadSize,
+  backgroundType,
+  backgroundColor1,
+  backgroundColor2,
+  backgroundImage,
+  questionTransparentBg,
+  isPreview = true,
 }) => {
   const [feedback, setFeedback] = useState({ message: '', color: '' });
 
@@ -46,43 +54,31 @@ const KeypadPreview: React.FC<KeypadPreviewProps> = ({
     setTimeout(() => setFeedback({ message: '', color: '' }), 2000);
   };
 
+  const getBackgroundStyle = () => {
+    switch (backgroundType) {
+      case 'solid':
+        return { backgroundColor: backgroundColor1 };
+      case 'gradient':
+        return { backgroundImage: `linear-gradient(to bottom right, ${backgroundColor1}, ${backgroundColor2})` };
+      case 'pattern':
+        return {
+          backgroundImage: `radial-gradient(circle, ${backgroundColor1} 1px, transparent 1px), radial-gradient(circle, ${backgroundColor1} 1px, ${backgroundColor2} 1px)`,
+          backgroundSize: '20px 20px',
+        };
+      case 'image':
+        return { backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' };
+      default:
+        return { backgroundColor: 'var(--color-background-medium)' };
+    }
+  };
+
   return (
     <div 
       className="border rounded p-4"
       style={{
         minHeight: '400px',
         fontFamily: font,
-        backgroundImage: (() => {
-          if (background.startsWith('data:image')) return `url(${background})`;
-          switch (background) {
-            case 'Gradient Orange Black':
-              return 'linear-gradient(to right, var(--color-primary), var(--color-background-dark))';
-            case 'Gradient Radial':
-              return 'radial-gradient(circle, var(--color-primary), var(--color-background-dark))';
-            case 'Pattern Dots':
-              return 'radial-gradient(circle, var(--color-primary) 1px, transparent 1px), radial-gradient(circle, var(--color-primary) 1px, var(--color-background-dark) 1px)';
-            case 'Orange Grid':
-              return 'linear-gradient(to right, var(--color-primary) 1px, transparent 1px), linear-gradient(to bottom, var(--color-primary) 1px, transparent 1px)';
-            case 'Diagonal Stripes':
-              return 'linear-gradient(45deg, var(--color-primary) 25%, transparent 25%, transparent 75%, var(--color-primary) 75%, var(--color-primary)), linear-gradient(45deg, var(--color-primary) 25%, transparent 25%, transparent 75%, var(--color-primary) 75%, var(--color-primary))';
-            default:
-              return '';
-          }
-        })(),
-        backgroundSize: (() => {
-          switch (background) {
-            case 'Pattern Dots':
-              return '20px 20px';
-            case 'Orange Grid':
-              return '20px 20px';
-            case 'Diagonal Stripes':
-              return '20px 20px';
-            default:
-              return 'cover';
-          }
-        })(),
-        backgroundPosition: 'center',
-        backgroundColor: background.startsWith('data:image') ? 'transparent' : (background === 'Sfondo Grigio Chiaro' ? 'var(--color-background-light)' : (background === 'Sfondo Grigio Scuro' ? 'var(--color-background-medium)' : 'var(--color-background-dark)')),
+        ...getBackgroundStyle(),
         transform: `scale(${keypadSize / 100})`,
         transformOrigin: 'top left',
         position: 'relative', /* Aggiunto per posizionare il watermark */
@@ -105,14 +101,32 @@ const KeypadPreview: React.FC<KeypadPreviewProps> = ({
 
       {isPreview && <h3 style={{ color: 'var(--color-primary)' }}>Anteprima</h3>}
       
-      {question && <p className="text-center" style={{ color: 'var(--color-text-light)' }}>{question}</p>}
+      {question && (
+        <p 
+          className="text-center p-2 rounded mb-3"
+          style={{
+            color: 'var(--color-text-dark)',
+            backgroundColor: questionTransparentBg ? 'transparent' : 'rgba(255, 255, 255, 0.7)',
+            padding: '8px 12px', /* Aumenta padding */
+            borderRadius: '4px', /* Bordi arrotondati */
+            display: 'inline-block', /* Per adattarsi al contenuto */
+            margin: '0 auto 1rem auto', /* Centra e aggiunge margine */
+          }}
+        >
+          {question}
+        </p>
+      )}
 
       {feedback.message && (
         <div 
           className="text-center p-2 rounded mb-3"
           style={{
             color: feedback.color,
-            backgroundColor: transparentBg ? 'transparent' : 'rgba(0, 0, 0, 0.5)'
+            backgroundColor: transparentBg ? 'transparent' : 'rgba(255, 255, 255, 0.7)',
+            padding: '8px 12px', /* Aumenta padding */
+            borderRadius: '4px', /* Bordi arrotondati */
+            display: 'inline-block', /* Per adattarsi al contenuto */
+            margin: '0 auto 1rem auto', /* Centra e aggiunge margine */
           }}
         >
           {feedback.message}
