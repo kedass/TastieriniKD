@@ -20,20 +20,20 @@ const ConsentBanner = () => {
   };
 
   return (
-    <Modal show={show} backdrop="static" keyboard={false} centered>
-      <Modal.Header>
-        <Modal.Title>Informativa Legale</Modal.Title>
+    <Modal show={show} backdrop="static" keyboard={false} centered contentClassName="bg-dark text-light border-primary">
+      <Modal.Header className="border-bottom border-primary">
+        <Modal.Title className="text-primary">Informativa Legale</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <p>Questo sito utilizza cookie e raccoglie dati per migliorare la tua esperienza. Per continuare, devi accettare le nostre politiche.</p>
         <p>Puoi leggere le nostre informative qui:</p>
         <ul>
-          <li><Link href="/legal/privacy" onClick={() => setShow(false)}>Privacy Policy</Link></li>
-          <li><Link href="/legal/terms" onClick={() => setShow(false)}>Termini di Servizio</Link></li>
-          <li><Link href="/legal/cookies" onClick={() => setShow(false)}>Cookie Policy</Link></li>
+          <li><Link href="/legal/privacy" onClick={() => setShow(false)} className="text-primary">Privacy Policy</Link></li>
+          <li><Link href="/legal/terms" onClick={() => setShow(false)} className="text-primary">Termini di Servizio</Link></li>
+          <li><Link href="/legal/cookies" onClick={() => setShow(false)} className="text-primary">Cookie Policy</Link></li>
         </ul>
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className="border-top border-primary">
         <Button variant="primary" onClick={handleAccept}>
           Accetto
         </Button>
