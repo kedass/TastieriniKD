@@ -30,8 +30,8 @@ const InputField: React.FC<InputFieldProps> = ({ secretCode, caseSensitive, onSu
   return (
     <div className="d-flex justify-content-center">
       <InputGroup style={{ width: '300px' }}>
-        <FormControl placeholder="Inserisci la risposta..." value={input} onChange={handleInputChange} />
-        <Button variant="success" onClick={handleSubmitClick}>Invia</Button>
+        <FormControl placeholder="Inserisci la risposta..." value={input} onChange={handleInputChange} style={{ backgroundColor: '#333', color: '#ff8c00', borderColor: '#555' }} />
+        <Button variant="success" onClick={handleSubmitClick} style={{ backgroundColor: '#ff8c00', color: '#333', borderColor: '#ff8c00' }}>Invia</Button>
       </InputGroup>
     </div>
   );
