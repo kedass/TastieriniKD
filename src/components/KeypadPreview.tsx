@@ -16,6 +16,7 @@ interface KeypadPreviewProps {
   errorColor: string;
   transparentBg: boolean;
   keypadSize: number;
+  background: string;
 }
 
 const KeypadPreview: React.FC<KeypadPreviewProps> = ({ 
@@ -30,6 +31,7 @@ const KeypadPreview: React.FC<KeypadPreviewProps> = ({
   errorColor, 
   transparentBg, 
   keypadSize, 
+  background, 
   isPreview = true
 }) => {
   const [feedback, setFeedback] = useState({ message: '', color: '' });
