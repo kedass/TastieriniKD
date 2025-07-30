@@ -40,23 +40,23 @@ const AlphanumericKeypad: React.FC<AlphanumericKeypadProps> = ({ secretCode, cas
   return (
     <div className="d-flex flex-column align-items-center">
       <div className="mb-3" style={{ width: '300px' }}>
-        <input type="text" className="form-control text-center" value={input} readOnly />
+        <input type="text" className="form-control text-center" value={input} readOnly style={{ backgroundColor: 'var(--color-background-light)', color: 'var(--color-text-light)', borderColor: 'var(--color-primary)' }} />
       </div>
       <Row className="g-2" style={{ width: '300px' }}>
         {keys.map((key) => (
           <Col key={key} xs={2}>
-            <Button variant="light" className="w-100" onClick={() => handleKeyClick(key)} style={{ backgroundColor: '#333', color: '#ff8c00', borderColor: '#555' }}>
+            <Button variant="light" className="w-100" onClick={() => handleKeyClick(key)} style={{ backgroundColor: 'var(--color-background-light)', color: 'var(--color-primary)', borderColor: 'var(--color-primary)' }}>
               {key === ' ' ? 'Spazio' : key}
             </Button>
           </Col>
         ))}
         <Col xs={4}>
-          <Button variant="warning" className="w-100" onClick={handleClearClick} style={{ backgroundColor: '#ff8c00', color: '#333', borderColor: '#ff8c00' }}>
+          <Button variant="warning" className="w-100" onClick={handleClearClick} style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-dark)', borderColor: 'var(--color-primary)' }}>
             Canc
           </Button>
         </Col>
         <Col xs={4}>
-          <Button variant="success" className="w-100" onClick={handleOkClick} style={{ backgroundColor: '#ff8c00', color: '#333', borderColor: '#ff8c00' }}>
+          <Button variant="success" className="w-100" onClick={handleOkClick} style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-dark)', borderColor: 'var(--color-primary)' }}>
             OK
           </Button>
         </Col>
