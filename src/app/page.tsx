@@ -49,16 +49,16 @@ export default function Home() {
     setGeneratedLink(link);
   };
   return (
-    <Container fluid className="p-4" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
+    <Container fluid className="p-4" style={{ backgroundColor: 'var(--color-background-dark)', color: 'var(--color-text-light)' }}>
       <Row>
-        <Col md={4}>
-          <h2 style={{ color: 'var(--foreground)' }}>Personalizza il tuo Tastierino</h2>
-          <hr style={{ borderColor: 'var(--foreground)' }} />
+        <Col md={4} className="p-3 rounded" style={{ backgroundColor: 'var(--color-background-light)' }}>
+          <h2 style={{ color: 'var(--color-primary)' }}>Personalizza il tuo Tastierino</h2>
+          <hr style={{ borderColor: 'var(--color-primary)' }} />
 
           <Form>
             {/* Tipo di Tastierino */}
             <Form.Group className="mb-3">
-              <Form.Label style={{ color: 'var(--foreground)' }}>Tipo di Tastierino</Form.Label>
+              <Form.Label style={{ color: 'var(--color-text-light)' }}>Tipo di Tastierino</Form.Label>
               <Form.Select value={keypadType} onChange={(e) => setKeypadType(e.target.value)}>
                 <option>Numerico</option>
                 <option>Alfanumerico</option>
@@ -68,30 +68,30 @@ export default function Home() {
 
             {/* Domanda (opzionale) */}
             <Form.Group className="mb-3">
-              <Form.Label style={{ color: 'var(--foreground)' }}>Domanda (opzionale)</Form.Label>
+              <Form.Label style={{ color: 'var(--color-text-light)' }}>Domanda (opzionale)</Form.Label>
               <Form.Control type="text" placeholder="Es: Qual è la parola segreta?" value={question} onChange={(e) => setQuestion(e.target.value)} />
             </Form.Group>
 
             {/* Codice Segreto */}
             <Form.Group className="mb-3">
-              <Form.Label style={{ color: 'var(--foreground)' }}>Codice Segreto</Form.Label>
+              <Form.Label style={{ color: 'var(--color-text-light)' }}>Codice Segreto</Form.Label>
               <Form.Control type="text" placeholder="Inserisci la risposta corretta" value={secretCode} onChange={(e) => setSecretCode(e.target.value)} />
             </Form.Group>
 
             {/* Sensibile alle maiuscole/minuscole */}
             {keypadType === 'Barra di inserimento' && (
               <Form.Group className="mb-3">
-                <Form.Check type="switch" label="Sensibile alle maiuscole/minuscole" checked={caseSensitive} onChange={(e) => setCaseSensitive(e.target.checked)} style={{ color: 'var(--foreground)' }} />
+                <Form.Check type="switch" label="Sensibile alle maiuscole/minuscole" checked={caseSensitive} onChange={(e) => setCaseSensitive(e.target.checked)} style={{ color: 'var(--color-text-light)' }} />
               </Form.Group>
             )}
 
-            <hr style={{ borderColor: 'var(--foreground)' }} />
+            <hr style={{ borderColor: 'var(--color-primary)' }} />
 
-            <h4 style={{ color: 'var(--foreground)' }}>Stile</h4>
+            <h4 style={{ color: 'var(--color-primary)' }}>Stile</h4>
 
             {/* Font */}
             <Form.Group className="mb-3">
-              <Form.Label style={{ color: 'var(--foreground)' }}>Font</Form.Label>
+              <Form.Label style={{ color: 'var(--color-text-light)' }}>Font</Form.Label>
               <Form.Select value={font} onChange={(e) => setFont(e.target.value)}>
                 <option>Arial</option>
                 <option>Courier New</option>
@@ -101,16 +101,19 @@ export default function Home() {
 
             {/* Dimensioni Tastierino */}
             <Form.Group className="mb-3">
-              <Form.Label style={{ color: 'var(--foreground)' }}>Dimensioni Tastierino</Form.Label>
+              <Form.Label style={{ color: 'var(--color-text-light)' }}>Dimensioni Tastierino</Form.Label>
               <Form.Range value={keypadSize} onChange={(e) => setKeypadSize(parseInt(e.target.value))} />
             </Form.Group>
 
             {/* Sfondo */}
             <Form.Group className="mb-3">
-              <Form.Label style={{ color: 'var(--foreground)' }}>Sfondo</Form.Label>
+              <Form.Label style={{ color: 'var(--color-text-light)' }}>Sfondo</Form.Label>
               <Form.Select value={background} onChange={(e) => setBackground(e.target.value)}>
-                <option value="Sfondo 1">Sfondo 1</option>
-                <option value="Sfondo 2">Sfondo 2</option>
+                <option value="Sfondo 1">Sfondo Grigio Chiaro</option>
+                <option value="Sfondo 2">Sfondo Grigio Scuro</option>
+                <option value="Gradient Orange Black">Gradiente Arancione-Nero</option>
+                <option value="Gradient Radial">Gradiente Radiale</option>
+                <option value="Pattern Dots">Pattern Punti</option>
                 <option value="Carica immagine">Carica immagine</option>
               </Form.Select>
               {background === 'Carica immagine' && (
@@ -118,55 +121,55 @@ export default function Home() {
               )}
             </Form.Group>
 
-            <hr style={{ borderColor: 'var(--foreground)' }} />
+            <hr style={{ borderColor: 'var(--color-primary)' }} />
 
-            <h4 style={{ color: 'var(--foreground)' }}>Messaggi di Feedback</h4>
+            <h4 style={{ color: 'var(--color-primary)' }}>Messaggi di Feedback</h4>
 
             {/* Messaggio di Successo */}
             <Form.Group className="mb-3">
-              <Form.Label style={{ color: 'var(--foreground)' }}>Messaggio di Successo</Form.Label>
+              <Form.Label style={{ color: 'var(--color-text-light)' }}>Messaggio di Successo</Form.Label>
               <Form.Control type="text" value={successMessage} onChange={(e) => setSuccessMessage(e.target.value)} />
             </Form.Group>
 
             {/* Colore Testo Successo */}
             <Form.Group className="mb-3">
-              <Form.Label style={{ color: 'var(--foreground)' }}>Colore Testo Successo</Form.Label>
+              <Form.Label style={{ color: 'var(--color-text-light)' }}>Colore Testo Successo</Form.Label>
               <Form.Control type="color" value={successColor} onChange={(e) => setSuccessColor(e.target.value)} />
             </Form.Group>
 
             {/* Messaggio di Errore */}
             <Form.Group className="mb-3">
-              <Form.Label style={{ color: 'var(--foreground)' }}>Messaggio di Errore</Form.Label>
+              <Form.Label style={{ color: 'var(--color-text-light)' }}>Messaggio di Errore</Form.Label>
               <Form.Control type="text" value={errorMessage} onChange={(e) => setErrorMessage(e.target.value)} />
             </Form.Group>
 
             {/* Colore Testo Errore */}
             <Form.Group className="mb-3">
-              <Form.Label style={{ color: 'var(--foreground)' }}>Colore Testo Errore</Form.Label>
+              <Form.Label style={{ color: 'var(--color-text-light)' }}>Colore Testo Errore</Form.Label>
               <Form.Control type="color" value={errorColor} onChange={(e) => setErrorColor(e.target.value)} />
             </Form.Group>
 
             {/* Sfondo Trasparente */}
             <Form.Group className="mb-3">
-              <Form.Check type="switch" label="Sfondo messaggio trasparente" checked={transparentBg} onChange={(e) => setTransparentBg(e.target.checked)} style={{ color: 'var(--foreground)' }} />
+              <Form.Check type="switch" label="Sfondo messaggio trasparente" checked={transparentBg} onChange={(e) => setTransparentBg(e.target.checked)} style={{ color: 'var(--color-text-light)' }} />
             </Form.Group>
 
-            <hr style={{ borderColor: 'var(--foreground)' }} />
+            <hr style={{ borderColor: 'var(--color-primary)' }} />
 
-            <Button variant="primary" onClick={handleGenerateLink} style={{ backgroundColor: 'var(--foreground)', borderColor: 'var(--foreground)' }}>
+            <Button variant="primary" onClick={handleGenerateLink} style={{ backgroundColor: 'var(--color-primary)', borderColor: 'var(--color-primary)', color: 'var(--color-text-dark)' }}>
               Genera Link
             </Button>
 
             {generatedLink && (
               <div className="mt-3">
-                <Form.Label style={{ color: 'var(--foreground)' }}>Link Generato:</Form.Label>
+                <Form.Label style={{ color: 'var(--color-text-light)' }}>Link Generato:</Form.Label>
                 <Form.Control type="text" value={generatedLink} readOnly />
               </div>
             )}
           </Form>
         </Col>
 
-        <Col md={8}>
+        <Col md={8} className="p-3 rounded" style={{ backgroundColor: 'var(--color-background-light)' }}>
           <KeypadPreview 
             keypadType={keypadType} 
             question={question} 
