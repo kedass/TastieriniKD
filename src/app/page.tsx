@@ -11,7 +11,11 @@ export default function Home() {
   const [caseSensitive, setCaseSensitive] = useState(false);
   const [font, setFont] = useState('Arial');
   const [keypadSize, setKeypadSize] = useState(100);
-  const [background, setBackground] = useState('Sfondo 1'); // Può essere un URL o un Data URL
+  const [background, setBackground] = useState('solid'); // Tipo di sfondo
+  const [backgroundColor1, setBackgroundColor1] = useState('#FFFFFF'); // Colore 1 per sfondi
+  const [backgroundColor2, setBackgroundColor2] = useState('#FF8C00'); // Colore 2 per gradienti
+  const [backgroundImage, setBackgroundImage] = useState(''); // Data URL per immagine
+  const [questionTransparentBg, setQuestionTransparentBg] = useState(false); // Sfondo trasparente per la domanda
   const [successMessage, setSuccessMessage] = useState('Corretto!');
   const [successColor, setSuccessColor] = useState('#00ff00');
   const [errorMessage, setErrorMessage] = useState('Errato, riprova.');
@@ -24,7 +28,8 @@ export default function Home() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setBackground(reader.result as string);
+        setBackgroundImage(reader.result as string);
+        setBackground('image'); // Imposta il tipo su immagine quando si carica
       };
       reader.readAsDataURL(file);
     }
@@ -38,12 +43,16 @@ export default function Home() {
     params.append('caseSensitive', String(caseSensitive));
     params.append('font', font);
     params.append('keypadSize', String(keypadSize));
-    params.append('background', background);
+    params.append('backgroundType', background);
+    params.append('backgroundColor1', backgroundColor1);
+    params.append('backgroundColor2', backgroundColor2);
+    params.append('backgroundImage', backgroundImage);
     params.append('successMessage', successMessage);
     params.append('successColor', successColor);
     params.append('errorMessage', errorMessage);
     params.append('errorColor', errorColor);
     params.append('transparentBg', String(transparentBg));
+    params.append('questionTransparentBg', String(questionTransparentBg));
 
     const link = `${window.location.origin}/keypad?${params.toString()}`;
     setGeneratedLink(link);
@@ -70,6 +79,11 @@ export default function Home() {
             <Form.Group className="mb-3">
               <Form.Label>Domanda (opzionale)</Form.Label>
               <Form.Control type="text" placeholder="Es: Qual è la parola segreta?" value={question} onChange={(e) => setQuestion(e.target.value)} />
+            </Form.Group>
+
+            {/* Sfondo Trasparente Domanda */}
+            <Form.Group className="mb-3">
+              <Form.Check type="switch" label="Sfondo trasparente domanda" checked={questionTransparentBg} onChange={(e) => setQuestionTransparentBg(e.target.checked)} />
             </Form.Group>
 
             {/* Codice Segreto */}
@@ -107,19 +121,41 @@ export default function Home() {
 
             {/* Sfondo */}
             <Form.Group className="mb-3">
-              <Form.Label>Sfondo</Form.Label>
+              <Form.Label>Tipo Sfondo</Form.Label>
               <Form.Select value={background} onChange={(e) => setBackground(e.target.value)}>
-                <option value="Sfondo 1">Sfondo Grigio Chiaro</option>
-                <option value="Sfondo 2">Sfondo Grigio Scuro</option>
-                <option value="Gradient Orange Black">Gradiente Arancione-Nero</option>
-                <option value="Gradient Radial">Gradiente Radiale</option>
-                <option value="Pattern Dots">Pattern Punti</option>
-                <option value="Carica immagine">Carica immagine</option>
+                <option value="solid">Tinta Unita</option>
+                <option value="gradient">Gradiente</option>
+                <option value="pattern">Pattern</option>
+                <option value="image">Immagine Personalizzata</option>
               </Form.Select>
-              {background === 'Carica immagine' && (
-                <Form.Control type="file" className="mt-2" onChange={handleImageUpload} accept="image/*" />
-              )}
             </Form.Group>
+
+            {background === 'solid' && (
+              <Form.Group className="mb-3">
+                <Form.Label>Colore Sfondo</Form.Label>
+                <Form.Control type="color" value={backgroundColor1} onChange={(e) => setBackgroundColor1(e.target.value)} />
+              </Form.Group>
+            )}
+
+            {background === 'gradient' && (
+              <>
+                <Form.Group className="mb-3">
+                  <Form.Label>Colore Inizio Gradiente</Form.Label>
+                  <Form.Control type="color" value={backgroundColor1} onChange={(e) => setBackgroundColor1(e.target.value)} />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Colore Fine Gradiente</Form.Label>
+                  <Form.Control type="color" value={backgroundColor2} onChange={(e) => setBackgroundColor2(e.target.value)} />
+                </Form.Group>
+              </>
+            )}
+
+            {background === 'image' && (
+              <Form.Group className="mb-3">
+                <Form.Label>Carica Immagine</Form.Label>
+                <Form.Control type="file" className="mt-2" onChange={handleImageUpload} accept="image/*" />
+              </Form.Group>
+            )}
 
             <hr />
 
@@ -182,7 +218,11 @@ export default function Home() {
             errorColor={errorColor}
             transparentBg={transparentBg}
             keypadSize={keypadSize}
-            background={background}
+            backgroundType={background}
+            backgroundColor1={backgroundColor1}
+            backgroundColor2={backgroundColor2}
+            backgroundImage={backgroundImage}
+            questionTransparentBg={questionTransparentBg}
           />
         </Col>
       </Row>
