@@ -36,18 +36,18 @@ const NumericKeypad: React.FC<NumericKeypadProps> = ({ secretCode, onSuccess, on
       <Row className="g-2" style={{ width: '200px' }}>
         {numbers.map((number) => (
           <Col key={number} xs={4}>
-            <Button variant="light" className="w-100" onClick={() => handleNumberClick(number)}>
+            <Button variant="light" className="w-100" onClick={() => handleNumberClick(number)} style={{ backgroundColor: '#333', color: '#ff8c00', borderColor: '#555' }}>
               {number}
             </Button>
           </Col>
         ))}
         <Col xs={4}>
-          <Button variant="warning" className="w-100" onClick={handleClearClick}>
+          <Button variant="warning" className="w-100" onClick={handleClearClick} style={{ backgroundColor: '#ff8c00', color: '#333', borderColor: '#ff8c00' }}>
             Canc
           </Button>
         </Col>
         <Col xs={4}>
-          <Button variant="success" className="w-100" onClick={handleOkClick}>
+          <Button variant="success" className="w-100" onClick={handleOkClick} style={{ backgroundColor: '#ff8c00', color: '#333', borderColor: '#ff8c00' }}>
             OK
           </Button>
         </Col>
