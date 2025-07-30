@@ -61,11 +61,26 @@ const KeypadPreview: React.FC<KeypadPreviewProps> = ({
               return 'radial-gradient(circle, var(--color-primary), var(--color-background-dark))';
             case 'Pattern Dots':
               return 'radial-gradient(circle, var(--color-primary) 1px, transparent 1px), radial-gradient(circle, var(--color-primary) 1px, var(--color-background-dark) 1px)';
+            case 'Orange Grid':
+              return 'linear-gradient(to right, var(--color-primary) 1px, transparent 1px), linear-gradient(to bottom, var(--color-primary) 1px, transparent 1px)';
+            case 'Diagonal Stripes':
+              return 'linear-gradient(45deg, var(--color-primary) 25%, transparent 25%, transparent 75%, var(--color-primary) 75%, var(--color-primary)), linear-gradient(45deg, var(--color-primary) 25%, transparent 25%, transparent 75%, var(--color-primary) 75%, var(--color-primary))';
             default:
               return '';
           }
         })(),
-        backgroundSize: background === 'Pattern Dots' ? '20px 20px' : 'cover',
+        backgroundSize: (() => {
+          switch (background) {
+            case 'Pattern Dots':
+              return '20px 20px';
+            case 'Orange Grid':
+              return '20px 20px';
+            case 'Diagonal Stripes':
+              return '20px 20px';
+            default:
+              return 'cover';
+          }
+        })(),
         backgroundPosition: 'center',
         backgroundColor: background.startsWith('data:image') ? 'transparent' : (background === 'Sfondo Grigio Chiaro' ? 'var(--color-background-light)' : (background === 'Sfondo Grigio Scuro' ? 'var(--color-background-medium)' : 'var(--color-background-dark)')),
         transform: `scale(${keypadSize / 100})`,
