@@ -16,6 +16,7 @@ const KeypadContent = () => {
   const errorMessage = searchParams.get('errorMessage') || 'Errato, riprova.';
   const errorColor = searchParams.get('errorColor') || '#ff0000';
   const transparentBg = searchParams.get('transparentBg') === 'true';
+  const keypadSize = parseInt(searchParams.get('keypadSize') || '100');
 
   return (
     <KeypadPreview 
@@ -29,6 +30,7 @@ const KeypadContent = () => {
       errorMessage={errorMessage}
       errorColor={errorColor}
       transparentBg={transparentBg}
+      keypadSize={keypadSize}
       isPreview={false}
     />
   );
