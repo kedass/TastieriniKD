@@ -52,24 +52,36 @@ const KeypadPreview: React.FC<KeypadPreviewProps> = ({
       style={{
         minHeight: '400px',
         fontFamily: font,
-        backgroundImage: background.startsWith('data:image') ? `url(${background})` : '',
-        backgroundSize: 'cover',
+        backgroundImage: (() => {
+          if (background.startsWith('data:image')) return `url(${background})`;
+          switch (background) {
+            case 'Gradient Orange Black':
+              return 'linear-gradient(to right, var(--color-primary), var(--color-background-dark))';
+            case 'Gradient Radial':
+              return 'radial-gradient(circle, var(--color-primary), var(--color-background-dark))';
+            case 'Pattern Dots':
+              return 'radial-gradient(circle, var(--color-primary) 1px, transparent 1px), radial-gradient(circle, var(--color-primary) 1px, var(--color-background-dark) 1px)';
+            default:
+              return '';
+          }
+        })(),
+        backgroundSize: background === 'Pattern Dots' ? '20px 20px' : 'cover',
         backgroundPosition: 'center',
-        backgroundColor: background.startsWith('data:image') ? 'transparent' : (background === 'Sfondo 1' ? '#f0f0f0' : '#e0e0e0'),
+        backgroundColor: background.startsWith('data:image') ? 'transparent' : (background === 'Sfondo Grigio Chiaro' ? '#f0f0f0' : (background === 'Sfondo Grigio Scuro' ? '#e0e0e0' : 'var(--color-background-dark)')),
         transform: `scale(${keypadSize / 100})`,
         transformOrigin: 'top left',
       }}
     >
-      {isPreview && <h3>Anteprima</h3>}
+      {isPreview && <h3 style={{ color: 'var(--color-primary)' }}>Anteprima</h3>}
       
-      {question && <p className="text-center">{question}</p>}
+      {question && <p className="text-center" style={{ color: 'var(--color-text-light)' }}>{question}</p>}
 
       {feedback.message && (
         <div 
           className="text-center p-2 rounded mb-3"
           style={{
             color: feedback.color,
-            backgroundColor: transparentBg ? 'transparent' : 'rgba(0, 0, 0, 0.1)'
+            backgroundColor: transparentBg ? 'transparent' : 'rgba(0, 0, 0, 0.5)'
           }}
         >
           {feedback.message}
