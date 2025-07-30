@@ -50,8 +50,8 @@ export default function Home() {
   };
   return (
     <Container fluid className="p-4">
-      <Row>
-        <Col md={4} className="p-3 rounded-lg bg-gray-800 shadow-lg">
+      <Row className="justify-content-center">
+        <Col md={4} className="p-4 rounded-lg shadow-lg bg-background-medium">
           <h2>Personalizza il tuo Tastierino</h2>
           <hr />
 
@@ -169,7 +169,7 @@ export default function Home() {
           </Form>
         </Col>
 
-        <Col md={8} className="p-3 rounded-lg bg-gray-800 shadow-lg">
+        <Col md={8} className="p-4 rounded-lg shadow-lg bg-background-medium">
           <KeypadPreview 
             keypadType={keypadType} 
             question={question} 
