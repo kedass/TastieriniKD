@@ -17,7 +17,11 @@ const KeypadContent = () => {
   const errorColor = searchParams.get('errorColor') || '#ff0000';
   const transparentBg = searchParams.get('transparentBg') === 'true';
   const keypadSize = parseInt(searchParams.get('keypadSize') || '100');
-  const background = searchParams.get('background') || 'Sfondo 1';
+  const backgroundType = searchParams.get('backgroundType') || 'solid';
+  const backgroundColor1 = searchParams.get('backgroundColor1') || '#FFFFFF';
+  const backgroundColor2 = searchParams.get('backgroundColor2') || '#FF8C00';
+  const backgroundImage = searchParams.get('backgroundImage') || '';
+  const questionTransparentBg = searchParams.get('questionTransparentBg') === 'true';
 
   return (
     <KeypadPreview 
@@ -32,7 +36,11 @@ const KeypadContent = () => {
       errorColor={errorColor}
       transparentBg={transparentBg}
       keypadSize={keypadSize}
-      background={background}
+      backgroundType={backgroundType}
+      backgroundColor1={backgroundColor1}
+      backgroundColor2={backgroundColor2}
+      backgroundImage={backgroundImage}
+      questionTransparentBg={questionTransparentBg}
       isPreview={false}
     />
   );
