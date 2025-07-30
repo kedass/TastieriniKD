@@ -13,7 +13,8 @@ const AlphanumericKeypad: React.FC<AlphanumericKeypadProps> = ({ secretCode, cas
   const keys = [
     '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    ' '
   ];
 
   const handleKeyClick = (key: string) => {
@@ -44,18 +45,18 @@ const AlphanumericKeypad: React.FC<AlphanumericKeypadProps> = ({ secretCode, cas
       <Row className="g-2" style={{ width: '300px' }}>
         {keys.map((key) => (
           <Col key={key} xs={2}>
-            <Button variant="light" className="w-100" onClick={() => handleKeyClick(key)}>
-              {key}
+            <Button variant="light" className="w-100" onClick={() => handleKeyClick(key)} style={{ backgroundColor: '#333', color: '#ff8c00', borderColor: '#555' }}>
+              {key === ' ' ? 'Spazio' : key}
             </Button>
           </Col>
         ))}
-        <Col xs={6}>
-          <Button variant="warning" className="w-100" onClick={handleClearClick}>
+        <Col xs={4}>
+          <Button variant="warning" className="w-100" onClick={handleClearClick} style={{ backgroundColor: '#ff8c00', color: '#333', borderColor: '#ff8c00' }}>
             Canc
           </Button>
         </Col>
-        <Col xs={6}>
-          <Button variant="success" className="w-100" onClick={handleOkClick}>
+        <Col xs={4}>
+          <Button variant="success" className="w-100" onClick={handleOkClick} style={{ backgroundColor: '#ff8c00', color: '#333', borderColor: '#ff8c00' }}>
             OK
           </Button>
         </Col>
