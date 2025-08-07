@@ -1,0 +1,27 @@
+body {
+  background-color: #f8f9fa; /* Sfondo leggermente grigio */
+}
+
+.App {
+  /* Stile generale dell'app */
+}
+
+.controls-section {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.keypad-section {
+  padding: 20px;
+}
+
+/* Stile per l'header */
+.bg-dark h1 {
+  color: #FF8C00; /* Arancione */
+}
+
+.nav-link:hover {
+  color: #FF8C00 !important; /* Arancione al passaggio del mouse */
+}
