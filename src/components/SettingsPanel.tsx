@@ -2,7 +2,7 @@ import React from 'react';
 
 interface SettingsPanelProps {
   initialGrid: { rows: number; cols: number };
-  onGridChange: (rows: number; cols: number) => void;
+  onGridChange: (rows: number, cols: number) => void;
   onExport: () => void;
   onImport: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onBackgroundChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
