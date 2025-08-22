@@ -11,11 +11,15 @@ export interface KeyData {
   image?: string;
 }
 
+// Define Keypad Types
+export type KeypadType = 'custom' | 'numeric' | 'alphanumeric' | 'inputBar';
+
 // Define the type for the entire saved state
 interface AppState {
   grid: { rows: number; cols: number };
   keys: KeyData[];
   keypadBackground?: string;
+  keypadType: KeypadType;
 }
 
 // --- LocalStorage Utilities ---
@@ -42,40 +46,100 @@ const loadState = (): AppState | undefined => {
 };
 // ------------------------------
 
-const generateKeys = (rows: number, cols: number): KeyData[] => {
-  return Array.from({ length: rows * cols }, (_, i) => ({
-    id: i,
-    label: `Tasto ${i + 1}`,
-    color: '#e5e7eb',
-  }));
+const generateKeys = (type: KeypadType, rows: number, cols: number): KeyData[] => {
+  let defaultKeys: string[] = [];
+  let defaultRows = rows;
+  let defaultCols = cols;
+
+  switch (type) {
+    case 'numeric':
+      defaultKeys = ['7', '8', '9', '4', '5', '6', '1', '2', '3', '.', '0', '<']; // Basic numeric
+      defaultRows = 4;
+      defaultCols = 3;
+      break;
+    case 'alphanumeric':
+      defaultKeys = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ' ', '<']; // Simplified QWERTY
+      defaultRows = 4;
+      defaultCols = 7;
+      break;
+    case 'inputBar':
+      defaultKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ', '<']; // All common chars
+      defaultRows = 5;
+      defaultCols = 8;
+      break;
+    case 'custom':
+    default:
+      defaultKeys = Array.from({ length: rows * cols }, (_, i) => `Tasto ${i + 1}`);
+      break;
+  }
+
+  // Adjust grid dimensions if type-specific defaults are used
+  if (type !== 'custom') {
+    rows = defaultRows;
+    cols = defaultCols;
+  }
+
+  const generated: KeyData[] = [];
+  for (let i = 0; i < rows * cols; i++) {
+    generated.push({
+      id: i,
+      label: defaultKeys[i] || `Tasto ${i + 1}`,
+      color: '#e5e7eb',
+    });
+  }
+  return generated;
 };
 
 function App() {
   const [initialState] = useState(loadState());
   const [grid, setGrid] = useState(initialState?.grid || { rows: 3, cols: 3 });
-  const [keys, setKeys] = useState<KeyData[]>(initialState?.keys || generateKeys(grid.rows, grid.cols));
   const [keypadBackground, setKeypadBackground] = useState<string | undefined>(initialState?.keypadBackground);
+  const [keypadType, setKeypadType] = useState<KeypadType>(initialState?.keypadType || 'custom');
+  const [keys, setKeys] = useState<KeyData[]>(initialState?.keys || generateKeys(keypadType, grid.rows, grid.cols));
   const [editingKey, setEditingKey] = useState<KeyData | null>(null);
 
-  // Effect to save state whenever grid, keys, or background change
+  // Effect to update keys when grid or type changes
   useEffect(() => {
-    saveState({ grid, keys, keypadBackground });
-  }, [grid, keys, keypadBackground]);
+    setKeys(generateKeys(keypadType, grid.rows, grid.cols));
+  }, [grid, keypadType]);
+
+  // Effect to save state whenever grid, keys, background, or type change
+  useEffect(() => {
+    saveState({ grid, keys, keypadBackground, keypadType });
+  }, [grid, keys, keypadBackground, keypadType]);
 
   const handleGridChange = (newRows: number, newCols: number) => {
-    const newTotal = newRows * newCols;
-    const currentTotal = keys.length;
     setGrid({ rows: newRows, cols: newCols });
-    if (newTotal > currentTotal) {
-      const additionalKeys = Array.from({ length: newTotal - currentTotal }, (_, i) => ({
-        id: currentTotal + i,
-        label: `Tasto ${currentTotal + i + 1}`,
-        color: '#e5e7eb',
-      }));
-      setKeys(prevKeys => [...prevKeys, ...additionalKeys]);
-    } else if (newTotal < currentTotal) {
-      setKeys(prevKeys => prevKeys.slice(0, newTotal));
+    // When grid changes, if type is custom, adjust keys. Otherwise, generate based on type.
+    if (keypadType === 'custom') {
+      const newTotal = newRows * newCols;
+      const currentTotal = keys.length;
+      if (newTotal > currentTotal) {
+        const additionalKeys = Array.from({ length: newTotal - currentTotal }, (_, i) => ({
+          id: currentTotal + i,
+          label: `Tasto ${currentTotal + i + 1}`,
+          color: '#e5e7eb',
+        }));
+        setKeys(prevKeys => [...prevKeys, ...additionalKeys]);
+      } else if (newTotal < currentTotal) {
+        setKeys(prevKeys => prevKeys.slice(0, newTotal));
+      }
+    } else {
+      // If type is not custom, changing grid dimensions should reset keys based on type
+      setKeys(generateKeys(keypadType, newRows, newCols));
     }
+  };
+
+  const handleKeypadTypeChange = (type: KeypadType) => {
+    setKeypadType(type);
+    // Reset grid dimensions and keys based on new type
+    const newKeys = generateKeys(type, grid.rows, grid.cols);
+    setKeys(newKeys);
+    // Adjust grid dimensions if type-specific defaults are used
+    if (type === 'numeric') setGrid({ rows: 4, cols: 3 });
+    else if (type === 'alphanumeric') setGrid({ rows: 4, cols: 7 });
+    else if (type === 'inputBar') setGrid({ rows: 5, cols: 8 });
+    else setGrid({ rows: 3, cols: 3 }); // Custom default
   };
 
   const handleEditKey = (key: KeyData) => setEditingKey(key);
@@ -87,7 +151,7 @@ function App() {
   };
 
   const handleExport = () => {
-    const stateToExport: AppState = { grid, keys, keypadBackground };
+    const stateToExport: AppState = { grid, keys, keypadBackground, keypadType };
     const dataStr = JSON.stringify(stateToExport, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
     const linkElement = document.createElement('a');
@@ -105,10 +169,11 @@ function App() {
         const result = e.target?.result;
         if (typeof result !== 'string') throw new Error("File could not be read");
         const importedState: AppState = JSON.parse(result);
-        if (importedState.grid && importedState.keys) {
+        if (importedState.grid && importedState.keys && importedState.keypadType) {
           setGrid(importedState.grid);
           setKeys(importedState.keys);
           setKeypadBackground(importedState.keypadBackground);
+          setKeypadType(importedState.keypadType);
         } else {
           alert("File JSON non valido.");
         }
@@ -152,6 +217,8 @@ function App() {
               onBackgroundChange={handleBackgroundChange}
               onRemoveBackground={handleRemoveBackground}
               hasBackground={!!keypadBackground}
+              onKeypadTypeChange={handleKeypadTypeChange}
+              initialKeypadType={keypadType}
             />
           </div>
           <div style={keypadContainerStyle} className="md:col-span-2 bg-white p-4 md:p-8 rounded-xl shadow-lg flex justify-center items-center transition-all">

@@ -1,11 +1,13 @@
-import { KeyData } from "../App";
+import { KeyData, KeypadType } from "../App";
 
 interface KeyProps {
   keyData: KeyData;
   onClick: (key: KeyData) => void;
+  keypadType: KeypadType;
+  onKeypadInput?: (value: string) => void; // For inputBar type
 }
 
-function Key({ keyData, onClick }: KeyProps) {
+function Key({ keyData, onClick, keypadType, onKeypadInput }: KeyProps) {
   const keyStyle: React.CSSProperties = {
     backgroundColor: keyData.color,
     position: 'relative',
@@ -19,7 +21,11 @@ function Key({ keyData, onClick }: KeyProps) {
   }
 
   const handleClick = () => {
-    onClick(keyData);
+    if (keypadType === 'inputBar' && onKeypadInput) {
+      onKeypadInput(keyData.label);
+    } else {
+      onClick(keyData);
+    }
   };
 
   return (
