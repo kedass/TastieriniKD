@@ -1,45 +1,58 @@
+import { KeyData, GridSize } from '../types';
 import Key from './Key';
-import { KeyData, KeypadType } from '../App';
 
 interface KeypadProps {
   keys: KeyData[];
-  cols: number;
-  onKeyClick: (key: KeyData) => void;
-  keypadType: KeypadType;
-  onKeypadInput?: (value: string) => void; // For inputBar type
+  gridSize: GridSize;
+  handleKeyClick: (id: number) => void;
+  keypadType: 'numeric' | 'alphanumeric' | 'inputBar';
+  inputValue?: string;
+  handleKeypadInput?: (label: string) => void;
 }
 
-function Keypad({ keys, cols, onKeyClick, keypadType, onKeypadInput }: KeypadProps) {
+const Keypad: React.FC<KeypadProps> = ({ keys, gridSize, handleKeyClick, keypadType, inputValue, handleKeypadInput }) => {
   const gridStyle = {
     display: 'grid',
-    gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-    gap: '1rem',
+    gridTemplateColumns: `repeat(${gridSize.cols}, 1fr)`,
+    gridTemplateRows: `repeat(${gridSize.rows}, 1fr)`,
+    gap: '10px',
   };
 
   return (
-    <div className="p-4 bg-gray-100 rounded-lg w-full">
+    <div className="w-full max-w-4xl p-4 bg-gray-800 rounded-lg shadow-lg">
       {keypadType === 'inputBar' && (
-        <input 
-          type="text" 
-          readOnly 
-          value=""
-          placeholder="Input here..."
-          className="w-full p-3 mb-4 text-lg text-center bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none"
-        />
+        <div className="mb-4">
+          <input
+            type="text"
+            value={inputValue}
+            readOnly
+            className="w-full p-2 text-2xl bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400"
+            placeholder="L'input apparirà qui..."
+          />
+        </div>
       )}
       <div style={gridStyle}>
-        {keys.map((keyData) => (
-          <Key 
-            key={keyData.id} 
-            keyData={keyData} 
-            onClick={onKeyClick} 
-            onKeypadInput={onKeypadInput} 
-            keypadType={keypadType}
+        {keys.map(key => (
+          <Key
+            key={key.id}
+            label={key.label}
+            color={key.color}
+            image={key.image}
+            onClick={() => {
+              if (keypadType === 'inputBar' && handleKeypadInput) {
+                handleKeypadInput(key.label);
+              } else {
+                handleKeyClick(key.id);
+              }
+            }}
           />
         ))}
       </div>
     </div>
   );
-}
+};
+
+export default Keypad;
+
 
 export default Keypad;
