@@ -225,23 +225,28 @@ const App = () => {
   };
 
   const handleShare = () => {
-    const stateToSave = {
-      keys,
-      gridSize,
-      keypadType,
-      backgroundImage,
-      quizTitle,
-      quizQuestion,
-      correctAnswer,
-      correctMessage,
-      incorrectMessage
-    };
-    const jsonString = JSON.stringify(stateToSave);
-    const compressed = pako.deflate(jsonString);
-    const encoded = Buffer.from(compressed).toString('base64url');
+    try {
+      const stateToSave = {
+        keys,
+        gridSize,
+        keypadType,
+        backgroundImage,
+        quizTitle,
+        quizQuestion,
+        correctAnswer,
+        correctMessage,
+        incorrectMessage
+      };
+      const jsonString = JSON.stringify(stateToSave);
+      const compressed = pako.deflate(jsonString);
+      const encoded = Buffer.from(compressed).toString('base64url');
 
-    const url = `${window.location.origin}/view?data=${encoded}`;
-    setGeneratedLink(url);
+      const url = `${window.location.origin}/view?data=${encoded}`;
+      setGeneratedLink(url);
+    } catch (error) {
+      console.error("Errore durante la creazione del link:", error);
+      alert(`Si è verificato un errore durante la creazione del link. Dettagli: ${error}`);
+    }
   };
 
   if (isViewMode) {
