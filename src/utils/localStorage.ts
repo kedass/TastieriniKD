@@ -5,6 +5,12 @@ export interface AppState {
   gridSize: GridSize;
   keypadType: KeypadType;
   backgroundImage: string | null;
+  // Campi del quiz
+  quizTitle?: string;
+  quizQuestion?: string;
+  correctAnswer?: string;
+  correctMessage?: string;
+  incorrectMessage?: string;
 }
 
 export const loadState = (): AppState | undefined => {

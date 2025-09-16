@@ -3,20 +3,25 @@ import Keypad from './components/Keypad';
 import SettingsPanel from './components/SettingsPanel';
 import EditKeyModal from './components/EditKeyModal';
 import LegalFooter from './components/LegalFooter';
+import QuizViewer from './components/QuizViewer';
 import { KeyData, GridSize, KeypadType } from './types';
 import { saveState, loadState } from './utils/localStorage';
 import pako from 'pako';
 import { Buffer } from 'buffer';
 
+declare global {
+  interface Window {
+    Buffer: typeof Buffer;
+  }
+}
+
+// Polyfill per il buffer in ambiente browser
 window.Buffer = window.Buffer || Buffer;
 
-import { Buffer } from 'buffer';
-import pako from 'pako';
+const App = () => {
+  const isViewMode = window.location.pathname === '/view';
 
-// Assicurati che il buffer sia disponibile globalmente per pako in ambiente browser
-window.Buffer = window.Buffer || Buffer;
-
-function App() {
+  // State Principale
   const [keypadType, setKeypadType] = useState<KeypadType>('numeric');
   const [keys, setKeys] = useState<KeyData[]>([]);
   const [gridSize, setGridSize] = useState<GridSize>({ rows: 4, cols: 3 });
@@ -58,32 +63,27 @@ function App() {
       case 'inputBar':
         newGridSize = { rows: 5, cols: 11 };
         const inputLabels: (Omit<KeyData, 'id'>)[] = [
-          // Numeri
           { label: '1', color: '#4a5568' }, { label: '2', color: '#4a5568' }, { label: '3', color: '#4a5568' },
           { label: '4', color: '#4a5568' }, { label: '5', color: '#4a5568' }, { label: '6', color: '#4a5568' },
           { label: '7', color: '#4a5568' }, { label: '8', color: '#4a5568' }, { label: '9', color: '#4a5568' },
           { label: '0', color: '#4a5568' }, { label: 'Canc', color: '#a0aec0', colSpan: 1 },
-          // Prima fila QWERTY
           { label: 'Q', color: '#4a5568' }, { label: 'W', color: '#4a5568' }, { label: 'E', color: '#4a5568' },
           { label: 'R', color: '#4a5568' }, { label: 'T', color: '#4a5568' }, { label: 'Y', color: '#4a5568' },
           { label: 'U', color: '#4a5568' }, { label: 'I', color: '#4a5568' }, { label: 'O', color: '#4a5568' },
           { label: 'P', color: '#4a5568' }, { label: '' , color: 'transparent', colSpan: 1},
-          // Seconda fila
           { label: 'A', color: '#4a5568' }, { label: 'S', color: '#4a5568' }, { label: 'D', color: '#4a5568' },
           { label: 'F', color: '#4a5568' }, { label: 'G', color: '#4a5568' }, { label: 'H', color: '#4a5568' },
           { label: 'J', color: '#4a5568' }, { label: 'K', color: '#4a5568' }, { label: 'L', color: '#4a5568' },
           { label: '' , color: 'transparent', colSpan: 2},
-          // Terza fila
           { label: 'Z', color: '#4a5568' }, { label: 'X', color: '#4a5568' }, { label: 'C', color: '#4a5568' },
           { label: 'V', color: '#4a5568' }, { label: 'B', color: '#4a5568' }, { label: 'N', color: '#4a5568' },
           { label: 'M', color: '#4a5568' }, { label: '' , color: 'transparent', colSpan: 4},
-          // Barra spaziatrice
-          { label: 'Spazio', color: '#718096', colSpan: 11 },
+          { label: 'Spazio', color: '#718096', colSpan: 9 },
+          { label: 'Conferma', color: '#38a169', colSpan: 2 },
         ];
         newKeys = inputLabels.map((key, i) => ({ ...key, id: i }));
         break;
       case 'custom':
-        // Non fare nulla, l'utente personalizzerà
         break;
     }
     return { keys: newKeys, gridSize: newGridSize };
@@ -96,7 +96,6 @@ function App() {
       setGridSize(loadedState.gridSize);
       setKeypadType(loadedState.keypadType || 'numeric');
       setBackgroundImage(loadedState.backgroundImage || null);
-      // Carica i dati del quiz
       setQuizTitle(loadedState.quizTitle || 'Titolo del Quiz');
       setQuizQuestion(loadedState.quizQuestion || 'Scrivi qui la tua domanda');
       setCorrectAnswer(loadedState.correctAnswer || '');
@@ -114,7 +113,7 @@ function App() {
       const { keys: newKeys, gridSize: newGridSize } = generateKeys(keypadType);
       setKeys(newKeys);
       setGridSize(newGridSize);
-      setInputValue(''); // Resetta l'input quando il tipo cambia
+      setInputValue('');
     }
   }, [keypadType]);
 
@@ -181,31 +180,6 @@ function App() {
     setBackgroundImage(null);
   };
 
-  const handleShare = () => {
-    const stateToSave = {
-      keys,
-      gridSize,
-      keypadType,
-      backgroundImage,
-      quizTitle,
-      quizQuestion,
-      correctAnswer,
-      correctMessage,
-      incorrectMessage
-    };
-    const jsonString = JSON.stringify(stateToSave);
-    const compressed = pako.deflate(jsonString, { to: 'string' });
-    const encoded = Buffer.from(compressed).toString('base64url');
-
-    const url = `${window.location.origin}/view?data=${encoded}`;
-
-    navigator.clipboard.writeText(url).then(() => {
-      alert('Link del quiz copiato negli appunti!');
-    }, () => {
-      alert('Errore durante la copia del link.');
-    });
-  };
-
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -240,7 +214,6 @@ function App() {
         return key;
       });
       setKeys(newKeys);
-      // Also update the selectedKey if it's being edited
       if (selectedKey && selectedKey.id === keyId) {
         setSelectedKey({ ...selectedKey, image: reader.result as string });
       }
@@ -248,6 +221,34 @@ function App() {
     reader.readAsDataURL(file);
   };
 
+  const handleShare = () => {
+    const stateToSave = {
+      keys,
+      gridSize,
+      keypadType,
+      backgroundImage,
+      quizTitle,
+      quizQuestion,
+      correctAnswer,
+      correctMessage,
+      incorrectMessage
+    };
+    const jsonString = JSON.stringify(stateToSave);
+    const compressed = pako.deflate(jsonString);
+    const encoded = Buffer.from(compressed).toString('base64url');
+
+    const url = `${window.location.origin}/view?data=${encoded}`;
+
+    navigator.clipboard.writeText(url).then(() => {
+      alert('Link del quiz copiato negli appunti!');
+    }, () => {
+      alert('Errore durante la copia del link.');
+    });
+  };
+
+  if (isViewMode) {
+    return <QuizViewer />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-4 font-sans">
@@ -262,13 +263,12 @@ function App() {
             gridSize={gridSize}
             onGridSizeChange={handleGridSizeChange}
             onFileUpload={handleFileUpload}
-            onExport={handleShare} // Temporaneamente lascio questo, poi lo cambieremo in share
+            onExport={handleShare}
             onImport={handleImport}
             onKeypadTypeChange={setKeypadType}
             currentType={keypadType}
             removeBackgroundImage={removeBackgroundImage}
             hasBackgroundImage={!!backgroundImage}
-            // Props per il Quiz
             quizTitle={quizTitle}
             onQuizTitleChange={setQuizTitle}
             quizQuestion={quizQuestion}
@@ -282,7 +282,6 @@ function App() {
           />
         </div>
         <div className="w-full md:w-2/3 flex flex-col gap-4">
-          {/* Area Testo Quiz */}
           <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
             <input 
               type="text"
@@ -300,16 +299,15 @@ function App() {
             />
           </div>
 
-          {/* Tastierino */}
           <div className="w-full h-full" style={{ backgroundImage: `url(${backgroundImage || ''})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-           <Keypad 
-              keys={keys} 
-              gridSize={gridSize} 
-              handleKeyClick={handleKeyClick} 
-              keypadType={keypadType}
-              inputValue={inputValue}
-              handleKeypadInput={handleKeypadInput}
-            />
+             <Keypad 
+                keys={keys} 
+                gridSize={gridSize} 
+                handleKeyClick={handleKeyClick} 
+                keypadType={keypadType}
+                inputValue={inputValue}
+                handleKeypadInput={handleKeypadInput}
+              />
           </div>
         </div>
       </main>

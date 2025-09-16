@@ -105,7 +105,15 @@ function SettingsPanel({
           <h4 className="font-semibold text-md mb-3 text-cyan-400">Impostazioni Quiz</h4>
           <div className="space-y-3">
             <div>
-              <label htmlFor="quizTitle" className="block text-sm font-medium text-gray-400">Risposta Corretta</label>
+              <label htmlFor="quizTitle" className="block text-sm font-medium text-gray-400">Titolo del Quiz</label>
+              <input type="text" id="quizTitle" value={quizTitle} onChange={(e) => onQuizTitleChange(e.target.value)} className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm" />
+            </div>
+            <div>
+              <label htmlFor="quizQuestion" className="block text-sm font-medium text-gray-400">Domanda del Quiz</label>
+              <textarea id="quizQuestion" value={quizQuestion} onChange={(e) => onQuizQuestionChange(e.target.value)} rows={3} className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm resize-none" />
+            </div>
+            <div>
+              <label htmlFor="correctAnswer" className="block text-sm font-medium text-gray-400">Risposta Corretta</label>
               <input type="text" id="correctAnswer" value={correctAnswer} onChange={(e) => onCorrectAnswerChange(e.target.value)} className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm" />
             </div>
             <div>
