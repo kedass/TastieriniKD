@@ -55,8 +55,6 @@ const QuizViewer = () => {
       setUserAnswer(prev => prev.slice(0, -1));
     } else if (label === 'Spazio') {
       setUserAnswer(prev => prev + ' ');
-    } else if (label === 'Conferma') {
-      handleConfirm();
     } else {
       setUserAnswer(prev => prev + label);
     }
@@ -101,6 +99,14 @@ const QuizViewer = () => {
             handleKeypadInput={handleKeypadInput}
           />
         </div>
+
+        {/* Pulsante di Conferma */}
+        <button 
+          onClick={handleConfirm}
+          className="w-full py-3 mt-4 text-xl font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors shadow-lg"
+        >
+          Conferma Risposta
+        </button>
 
         {/* Area Feedback */}
         {feedback && (

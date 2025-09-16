@@ -36,6 +36,7 @@ const App = () => {
   const [correctAnswer, setCorrectAnswer] = useState('');
   const [correctMessage, setCorrectMessage] = useState('Risposta Corretta!');
   const [incorrectMessage, setIncorrectMessage] = useState('Risposta Errata, riprova.');
+  const [generatedLink, setGeneratedLink] = useState('');
 
   const generateKeys = (type: KeypadType): { keys: KeyData[], gridSize: GridSize } => {
     let newKeys: KeyData[] = [];
@@ -44,20 +45,23 @@ const App = () => {
     switch (type) {
       case 'numeric':
         newGridSize = { rows: 4, cols: 3 };
-        newKeys = Array.from({ length: 12 }, (_, i) => {
-          const labels = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#'];
-          return { id: i, label: labels[i], color: '#4a5568' };
-        });
+        const labels = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'Canc'];
+        newKeys = labels.map((label, i) => ({
+          id: i, 
+          label: label, 
+          color: label === 'Canc' ? '#a0aec0' : '#4a5568' 
+        }));
         break;
       case 'alphanumeric':
         newGridSize = { rows: 5, cols: 10 };
         const numLabels = '1234567890';
         const alphaLabels = 'QWERTYUIOPASDFGHJKLZXCVBNM';
-        const combinedLabels = [...numLabels.split(''), ...alphaLabels.split('')];
+        const specialKeys = ['Canc'];
+        const combinedLabels = [...numLabels.split(''), ...alphaLabels.split(''), ...specialKeys];
         newKeys = combinedLabels.map((label, i) => ({
           id: i,
           label: label,
-          color: '#4a5568',
+          color: label === 'Canc' ? '#a0aec0' : '#4a5568',
         }));
         break;
       case 'inputBar':
@@ -78,8 +82,7 @@ const App = () => {
           { label: 'Z', color: '#4a5568' }, { label: 'X', color: '#4a5568' }, { label: 'C', color: '#4a5568' },
           { label: 'V', color: '#4a5568' }, { label: 'B', color: '#4a5568' }, { label: 'N', color: '#4a5568' },
           { label: 'M', color: '#4a5568' }, { label: '' , color: 'transparent', colSpan: 4},
-          { label: 'Spazio', color: '#718096', colSpan: 9 },
-          { label: 'Conferma', color: '#38a169', colSpan: 2 },
+          { label: 'Spazio', color: '#718096', colSpan: 11 },
         ];
         newKeys = inputLabels.map((key, i) => ({ ...key, id: i }));
         break;
@@ -238,12 +241,7 @@ const App = () => {
     const encoded = Buffer.from(compressed).toString('base64url');
 
     const url = `${window.location.origin}/view?data=${encoded}`;
-
-    navigator.clipboard.writeText(url).then(() => {
-      alert('Link del quiz copiato negli appunti!');
-    }, () => {
-      alert('Errore durante la copia del link.');
-    });
+    setGeneratedLink(url);
   };
 
   if (isViewMode) {
@@ -279,6 +277,7 @@ const App = () => {
             onCorrectMessageChange={setCorrectMessage}
             incorrectMessage={incorrectMessage}
             onIncorrectMessageChange={setIncorrectMessage}
+            generatedLink={generatedLink}
           />
         </div>
         <div className="w-full md:w-2/3 flex flex-col gap-4">

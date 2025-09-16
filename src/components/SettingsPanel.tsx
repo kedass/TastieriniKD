@@ -22,6 +22,7 @@ interface SettingsPanelProps {
   onCorrectMessageChange: (value: string) => void;
   incorrectMessage: string;
   onIncorrectMessageChange: (value: string) => void;
+  generatedLink: string;
 }
 
 function SettingsPanel({ 
@@ -43,7 +44,8 @@ function SettingsPanel({
   correctMessage,
   onCorrectMessageChange,
   incorrectMessage,
-  onIncorrectMessageChange
+  onIncorrectMessageChange,
+  generatedLink
 }: SettingsPanelProps) {
 
   const handleRowsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,6 +135,15 @@ function SettingsPanel({
         <button onClick={onExport} className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
           Crea Link Quiz
         </button>
+        {generatedLink && (
+          <div className="mt-4 p-3 bg-gray-900 rounded-lg border border-cyan-500">
+            <label className="block text-sm font-medium text-gray-300">Link Generato:</label>
+            <div className="flex items-center mt-1">
+              <input type="text" readOnly value={generatedLink} className="w-full px-2 py-1 bg-gray-700 border border-gray-600 rounded-md text-white text-sm" />
+              <button onClick={() => navigator.clipboard.writeText(generatedLink)} className="ml-2 px-3 py-1 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 text-sm">Copia</button>
+            </div>
+          </div>
+        )}
         <input type="file" accept=".json" onChange={onImport} ref={importInputRef} className="hidden" />
         <button onClick={() => importInputRef.current?.click()} className="w-full px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 transition-colors">
           Importa JSON
