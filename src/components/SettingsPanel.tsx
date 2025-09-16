@@ -1,31 +1,41 @@
 import React from 'react';
-import { KeypadType } from '../App';
+import { GridSize, KeypadType } from '../types';
 
 interface SettingsPanelProps {
-  initialGrid: { rows: number; cols: number };
-  onGridChange: (rows: number, cols: number) => void;
+  gridSize: GridSize;
+  onGridSizeChange: (rows: number, cols: number) => void;
+  onFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onExport: () => void;
-  onImport: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onBackgroundChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onRemoveBackground: () => void;
-  hasBackground: boolean;
+  onImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeypadTypeChange: (type: KeypadType) => void;
-  initialKeypadType: KeypadType;
+  currentType: KeypadType;
+  removeBackgroundImage: () => void;
+  hasBackgroundImage: boolean;
 }
 
-function SettingsPanel({ initialGrid, onGridChange, onExport, onImport, onBackgroundChange, onRemoveBackground, hasBackground, onKeypadTypeChange, initialKeypadType }: SettingsPanelProps) {
+function SettingsPanel({ 
+  gridSize, 
+  onGridSizeChange, 
+  onFileUpload, 
+  onExport, 
+  onImport, 
+  onKeypadTypeChange, 
+  currentType,
+  removeBackgroundImage,
+  hasBackgroundImage
+}: SettingsPanelProps) {
 
   const handleRowsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newRows = parseInt(e.target.value, 10);
     if (newRows > 0) {
-      onGridChange(newRows, initialGrid.cols);
+      onGridSizeChange(newRows, gridSize.cols);
     }
   };
 
   const handleColsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newCols = parseInt(e.target.value, 10);
     if (newCols > 0) {
-      onGridChange(initialGrid.rows, newCols);
+      onGridSizeChange(gridSize.rows, newCols);
     }
   };
 
@@ -33,49 +43,48 @@ function SettingsPanel({ initialGrid, onGridChange, onExport, onImport, onBackgr
     onKeypadTypeChange(e.target.value as KeypadType);
   };
 
+  
+
   const importInputRef = React.useRef<HTMLInputElement>(null);
 
   return (
-    <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 h-full flex flex-col">
+    <div className="p-4 bg-gray-800 rounded-lg border border-gray-700 h-full flex flex-col text-white">
       <h3 className="font-semibold text-lg mb-4">Impostazioni</h3>
       <div className="space-y-4">
-        {/* Keypad Type Selection */}
         <div>
-          <label htmlFor="keypadType" className="block text-sm font-medium text-gray-700">Tipo Tastierino</label>
-          <select id="keypadType" name="keypadType" value={initialKeypadType} onChange={handleTypeChange} className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm">
+          <label htmlFor="keypadType" className="block text-sm font-medium text-gray-400">Tipo Tastierino</label>
+          <select id="keypadType" name="keypadType" value={currentType} onChange={handleTypeChange} className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm">
             <option value="custom">Personalizzato</option>
             <option value="numeric">Numerico</option>
             <option value="alphanumeric">Alfanumerico</option>
             <option value="inputBar">Barra di Inserimento</option>
           </select>
         </div>
-        <hr />
-        {/* Grid Settings */}
+        <hr className="border-gray-600"/>
         <div>
-          <label htmlFor="rows" className="block text-sm font-medium text-gray-700">Righe</label>
-          <input type="number" id="rows" name="rows" value={initialGrid.rows} onChange={handleRowsChange} min={1} className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm" />
+          <label htmlFor="rows" className="block text-sm font-medium text-gray-400">Righe</label>
+          <input type="number" id="rows" name="rows" value={gridSize.rows} onChange={handleRowsChange} min={1} className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm" />
         </div>
         <div>
-          <label htmlFor="cols" className="block text-sm font-medium text-gray-700">Colonne</label>
-          <input type="number" id="cols" name="cols" value={initialGrid.cols} onChange={handleColsChange} min={1} className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm" />
+          <label htmlFor="cols" className="block text-sm font-medium text-gray-400">Colonne</label>
+          <input type="number" id="cols" name="cols" value={gridSize.cols} onChange={handleColsChange} min={1} className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm" />
         </div>
-        <hr />
-        {/* Background Settings */}
+        <hr className="border-gray-600"/>
         <div>
-          <label htmlFor="keypadBg" className="block text-sm font-medium text-gray-700">Sfondo Tastierino</label>
-          <input type="file" id="keypadBg" accept=".png, .jpg, .jpeg" onChange={onBackgroundChange} className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"/>
-          {hasBackground && (
-              <button onClick={onRemoveBackground} className="mt-2 text-xs text-red-500 hover:text-red-700">Rimuovi sfondo</button>
+          <label htmlFor="keypadBg" className="block text-sm font-medium text-gray-400">Sfondo Tastierino</label>
+          <input type="file" id="keypadBg" accept=".png, .jpg, .jpeg" onChange={onFileUpload} className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100"/>
+          {hasBackgroundImage && (
+              <button onClick={removeBackgroundImage} className="mt-2 text-xs text-red-400 hover:text-red-600">Rimuovi sfondo</button>
           )}
         </div>
       </div>
 
       <div className="mt-auto pt-6 space-y-2">
-        <button onClick={onExport} className="w-full px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
+        <button onClick={onExport} className="w-full px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors">
           Esporta JSON
         </button>
         <input type="file" accept=".json" onChange={onImport} ref={importInputRef} className="hidden" />
-        <button onClick={() => importInputRef.current?.click()} className="w-full px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
+        <button onClick={() => importInputRef.current?.click()} className="w-full px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 transition-colors">
           Importa JSON
         </button>
       </div>

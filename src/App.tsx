@@ -3,11 +3,11 @@ import Keypad from './components/Keypad';
 import SettingsPanel from './components/SettingsPanel';
 import EditKeyModal from './components/EditKeyModal';
 import LegalFooter from './components/LegalFooter';
-import { KeyData, GridSize } from './types';
+import { KeyData, GridSize, KeypadType } from './types';
 import { saveState, loadState } from './utils/localStorage';
 
 function App() {
-  const [keypadType, setKeypadType] = useState<'numeric' | 'alphanumeric' | 'inputBar'>('numeric');
+  const [keypadType, setKeypadType] = useState<KeypadType>('numeric');
   const [keys, setKeys] = useState<KeyData[]>([]);
   const [gridSize, setGridSize] = useState<GridSize>({ rows: 4, cols: 3 });
   const [selectedKey, setSelectedKey] = useState<KeyData | null>(null);
@@ -15,7 +15,7 @@ function App() {
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState('');
 
-  const generateKeys = (type: 'numeric' | 'alphanumeric' | 'inputBar'): { keys: KeyData[], gridSize: GridSize } => {
+  const generateKeys = (type: KeypadType): { keys: KeyData[], gridSize: GridSize } => {
     let newKeys: KeyData[] = [];
     let newGridSize: GridSize = { rows: 4, cols: 3 };
 
@@ -38,18 +38,33 @@ function App() {
         break;
       case 'inputBar':
         newGridSize = { rows: 5, cols: 11 };
-        const inputLabels = [
-          '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Canc',
-          'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
-          'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
-          'Z', 'X', 'C', 'V', 'B', 'N', 'M',
-          'Spazio'
+        const inputLabels: (Omit<KeyData, 'id'>)[] = [
+          // Numeri
+          { label: '1', color: '#4a5568' }, { label: '2', color: '#4a5568' }, { label: '3', color: '#4a5568' },
+          { label: '4', color: '#4a5568' }, { label: '5', color: '#4a5568' }, { label: '6', color: '#4a5568' },
+          { label: '7', color: '#4a5568' }, { label: '8', color: '#4a5568' }, { label: '9', color: '#4a5568' },
+          { label: '0', color: '#4a5568' }, { label: 'Canc', color: '#a0aec0', colSpan: 1 },
+          // Prima fila QWERTY
+          { label: 'Q', color: '#4a5568' }, { label: 'W', color: '#4a5568' }, { label: 'E', color: '#4a5568' },
+          { label: 'R', color: '#4a5568' }, { label: 'T', color: '#4a5568' }, { label: 'Y', color: '#4a5568' },
+          { label: 'U', color: '#4a5568' }, { label: 'I', color: '#4a5568' }, { label: 'O', color: '#4a5568' },
+          { label: 'P', color: '#4a5568' }, { label: '' , color: 'transparent', colSpan: 1},
+          // Seconda fila
+          { label: 'A', color: '#4a5568' }, { label: 'S', color: '#4a5568' }, { label: 'D', color: '#4a5568' },
+          { label: 'F', color: '#4a5568' }, { label: 'G', color: '#4a5568' }, { label: 'H', color: '#4a5568' },
+          { label: 'J', color: '#4a5568' }, { label: 'K', color: '#4a5568' }, { label: 'L', color: '#4a5568' },
+          { label: '' , color: 'transparent', colSpan: 2},
+          // Terza fila
+          { label: 'Z', color: '#4a5568' }, { label: 'X', color: '#4a5568' }, { label: 'C', color: '#4a5568' },
+          { label: 'V', color: '#4a5568' }, { label: 'B', color: '#4a5568' }, { label: 'N', color: '#4a5568' },
+          { label: 'M', color: '#4a5568' }, { label: '' , color: 'transparent', colSpan: 4},
+          // Barra spaziatrice
+          { label: 'Spazio', color: '#718096', colSpan: 11 },
         ];
-        newKeys = inputLabels.map((label, i) => ({
-          id: i,
-          label: label,
-          color: '#4a5568',
-        }));
+        newKeys = inputLabels.map((key, i) => ({ ...key, id: i }));
+        break;
+      case 'custom':
+        // Non fare nulla, l'utente personalizzerà
         break;
     }
     return { keys: newKeys, gridSize: newGridSize };
@@ -70,10 +85,12 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const { keys: newKeys, gridSize: newGridSize } = generateKeys(keypadType);
-    setKeys(newKeys);
-    setGridSize(newGridSize);
-    setInputValue(''); // Resetta l'input quando il tipo cambia
+    if (keypadType !== 'custom') {
+      const { keys: newKeys, gridSize: newGridSize } = generateKeys(keypadType);
+      setKeys(newKeys);
+      setGridSize(newGridSize);
+      setInputValue(''); // Resetta l'input quando il tipo cambia
+    }
   }, [keypadType]);
 
 
@@ -112,14 +129,21 @@ function App() {
 
   const handleGridSizeChange = (rows: number, cols: number) => {
     setGridSize({ rows, cols });
+    setKeypadType('custom');
   };
 
-  const handleFileUpload = (file: File) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
     const reader = new FileReader();
     reader.onloadend = () => {
       setBackgroundImage(reader.result as string);
     };
     reader.readAsDataURL(file);
+  };
+
+  const removeBackgroundImage = () => {
+    setBackgroundImage(null);
   };
 
   const handleExport = () => {
@@ -140,11 +164,13 @@ function App() {
     linkElement.click();
   };
 
-  const handleImport = (file: File) => {
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = (event) => {
       try {
-        const text = e.target?.result;
+        const text = event.target?.result;
         if (typeof text === 'string') {
           const importedState = JSON.parse(text);
           if (importedState.keys && importedState.gridSize) {
@@ -172,6 +198,10 @@ function App() {
         return key;
       });
       setKeys(newKeys);
+      // Also update the selectedKey if it's being edited
+      if (selectedKey && selectedKey.id === keyId) {
+        setSelectedKey({ ...selectedKey, image: reader.result as string });
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -194,9 +224,11 @@ function App() {
             onImport={handleImport}
             onKeypadTypeChange={setKeypadType}
             currentType={keypadType}
+            removeBackgroundImage={removeBackgroundImage}
+            hasBackgroundImage={!!backgroundImage}
           />
         </div>
-        <div className="w-full md:w-2/3" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="w-full md:w-2/3" style={{ backgroundImage: `url(${backgroundImage || ''})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
            <Keypad 
               keys={keys} 
               gridSize={gridSize} 

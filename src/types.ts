@@ -3,6 +3,7 @@ export interface KeyData {
   label: string;
   color: string;
   image?: string;
+  colSpan?: number;
 }
 
 export interface GridSize {
@@ -10,4 +11,4 @@ export interface GridSize {
   cols: number;
 }
 
-export type KeypadType = 'numeric' | 'alphanumeric' | 'inputBar';
+export type KeypadType = 'numeric' | 'alphanumeric' | 'inputBar' | 'custom';

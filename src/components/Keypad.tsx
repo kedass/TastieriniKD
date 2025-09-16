@@ -1,11 +1,11 @@
-import { KeyData, GridSize } from '../types';
+import { KeyData, GridSize, KeypadType } from '../types';
 import Key from './Key';
 
 interface KeypadProps {
   keys: KeyData[];
   gridSize: GridSize;
   handleKeyClick: (id: number) => void;
-  keypadType: 'numeric' | 'alphanumeric' | 'inputBar';
+  keypadType: KeypadType;
   inputValue?: string;
   handleKeypadInput?: (label: string) => void;
 }
@@ -16,6 +16,14 @@ const Keypad: React.FC<KeypadProps> = ({ keys, gridSize, handleKeyClick, keypadT
     gridTemplateColumns: `repeat(${gridSize.cols}, 1fr)`,
     gridTemplateRows: `repeat(${gridSize.rows}, 1fr)`,
     gap: '10px',
+  };
+
+  const onKeyClickHandler = (key: KeyData) => {
+    if (keypadType === 'inputBar' && handleKeypadInput) {
+      handleKeypadInput(key.label);
+    } else {
+      handleKeyClick(key.id);
+    }
   };
 
   return (
@@ -35,24 +43,13 @@ const Keypad: React.FC<KeypadProps> = ({ keys, gridSize, handleKeyClick, keypadT
         {keys.map(key => (
           <Key
             key={key.id}
-            label={key.label}
-            color={key.color}
-            image={key.image}
-            onClick={() => {
-              if (keypadType === 'inputBar' && handleKeypadInput) {
-                handleKeypadInput(key.label);
-              } else {
-                handleKeyClick(key.id);
-              }
-            }}
+            keyData={key}
+            onClick={onKeyClickHandler}
           />
         ))}
       </div>
     </div>
   );
 };
-
-export default Keypad;
-
 
 export default Keypad;
