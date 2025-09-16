@@ -19,7 +19,19 @@ declare global {
 window.Buffer = window.Buffer || Buffer;
 
 const App = () => {
-  const isViewMode = window.location.pathname === '/view';
+  // Semplice router basato su hash
+  const [hash, setHash] = useState(window.location.hash);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setHash(window.location.hash);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const isViewMode = hash.startsWith('#/?data=');
 
   // State Principale
   const [keypadType, setKeypadType] = useState<KeypadType>('numeric');
@@ -245,7 +257,7 @@ const App = () => {
         .replace(/\//g, '_')
         .replace(/=+$/, '');
 
-      const url = `${window.location.origin}/view?data=${encoded}`;
+      const url = `${window.location.origin}/#/?data=${encoded}`;
       setGeneratedLink(url);
     } catch (error) {
       console.error("Errore durante la creazione del link:", error);

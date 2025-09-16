@@ -32,11 +32,12 @@ const QuizViewer = () => {
 
   useEffect(() => {
     try {
-      const urlParams = new URLSearchParams(window.location.search);
-      const data = urlParams.get('data');
-      if (data) {
+      const hash = window.location.hash;
+      const dataString = hash.startsWith('#/?data=') ? hash.substring(8) : null;
+
+      if (dataString) {
         // Ricostruisce il Base64 standard dal formato URL-safe
-        let base64 = data.replace(/-/g, '+').replace(/_/g, '/');
+        let base64 = dataString.replace(/-/g, '+').replace(/_/g, '/');
         while (base64.length % 4) {
           base64 += '=';
         }
