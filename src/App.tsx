@@ -5,6 +5,16 @@ import EditKeyModal from './components/EditKeyModal';
 import LegalFooter from './components/LegalFooter';
 import { KeyData, GridSize, KeypadType } from './types';
 import { saveState, loadState } from './utils/localStorage';
+import pako from 'pako';
+import { Buffer } from 'buffer';
+
+window.Buffer = window.Buffer || Buffer;
+
+import { Buffer } from 'buffer';
+import pako from 'pako';
+
+// Assicurati che il buffer sia disponibile globalmente per pako in ambiente browser
+window.Buffer = window.Buffer || Buffer;
 
 function App() {
   const [keypadType, setKeypadType] = useState<KeypadType>('numeric');
@@ -14,6 +24,13 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState('');
+
+  // State per il Quiz
+  const [quizTitle, setQuizTitle] = useState('Titolo del Quiz');
+  const [quizQuestion, setQuizQuestion] = useState('Scrivi qui la tua domanda');
+  const [correctAnswer, setCorrectAnswer] = useState('');
+  const [correctMessage, setCorrectMessage] = useState('Risposta Corretta!');
+  const [incorrectMessage, setIncorrectMessage] = useState('Risposta Errata, riprova.');
 
   const generateKeys = (type: KeypadType): { keys: KeyData[], gridSize: GridSize } => {
     let newKeys: KeyData[] = [];
@@ -29,10 +46,12 @@ function App() {
         break;
       case 'alphanumeric':
         newGridSize = { rows: 5, cols: 10 };
-        const alphaLabels = 'QWERTYUIOPASDFGHJKLZXCVBNM'.split('');
-        newKeys = Array.from({ length: 26 }, (_, i) => ({
+        const numLabels = '1234567890';
+        const alphaLabels = 'QWERTYUIOPASDFGHJKLZXCVBNM';
+        const combinedLabels = [...numLabels.split(''), ...alphaLabels.split('')];
+        newKeys = combinedLabels.map((label, i) => ({
           id: i,
-          label: alphaLabels[i],
+          label: label,
           color: '#4a5568',
         }));
         break;
@@ -77,6 +96,12 @@ function App() {
       setGridSize(loadedState.gridSize);
       setKeypadType(loadedState.keypadType || 'numeric');
       setBackgroundImage(loadedState.backgroundImage || null);
+      // Carica i dati del quiz
+      setQuizTitle(loadedState.quizTitle || 'Titolo del Quiz');
+      setQuizQuestion(loadedState.quizQuestion || 'Scrivi qui la tua domanda');
+      setCorrectAnswer(loadedState.correctAnswer || '');
+      setCorrectMessage(loadedState.correctMessage || 'Risposta Corretta!');
+      setIncorrectMessage(loadedState.incorrectMessage || 'Risposta Errata, riprova.');
     } else {
       const { keys: initialKeys, gridSize: initialGridSize } = generateKeys(keypadType);
       setKeys(initialKeys);
@@ -95,8 +120,18 @@ function App() {
 
 
   useEffect(() => {
-    saveState({ keys, gridSize, keypadType, backgroundImage });
-  }, [keys, gridSize, keypadType, backgroundImage]);
+    saveState({ 
+      keys, 
+      gridSize, 
+      keypadType, 
+      backgroundImage, 
+      quizTitle, 
+      quizQuestion, 
+      correctAnswer, 
+      correctMessage, 
+      incorrectMessage 
+    });
+  }, [keys, gridSize, keypadType, backgroundImage, quizTitle, quizQuestion, correctAnswer, correctMessage, incorrectMessage]);
 
 
   const handleKeyClick = (id: number) => {
@@ -146,22 +181,29 @@ function App() {
     setBackgroundImage(null);
   };
 
-  const handleExport = () => {
+  const handleShare = () => {
     const stateToSave = {
       keys,
       gridSize,
       keypadType,
       backgroundImage,
+      quizTitle,
+      quizQuestion,
+      correctAnswer,
+      correctMessage,
+      incorrectMessage
     };
-    const dataStr = JSON.stringify(stateToSave, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = 'tastierino-config.json';
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
+    const jsonString = JSON.stringify(stateToSave);
+    const compressed = pako.deflate(jsonString, { to: 'string' });
+    const encoded = Buffer.from(compressed).toString('base64url');
+
+    const url = `${window.location.origin}/view?data=${encoded}`;
+
+    navigator.clipboard.writeText(url).then(() => {
+      alert('Link del quiz copiato negli appunti!');
+    }, () => {
+      alert('Errore durante la copia del link.');
+    });
   };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -220,15 +262,46 @@ function App() {
             gridSize={gridSize}
             onGridSizeChange={handleGridSizeChange}
             onFileUpload={handleFileUpload}
-            onExport={handleExport}
+            onExport={handleShare} // Temporaneamente lascio questo, poi lo cambieremo in share
             onImport={handleImport}
             onKeypadTypeChange={setKeypadType}
             currentType={keypadType}
             removeBackgroundImage={removeBackgroundImage}
             hasBackgroundImage={!!backgroundImage}
+            // Props per il Quiz
+            quizTitle={quizTitle}
+            onQuizTitleChange={setQuizTitle}
+            quizQuestion={quizQuestion}
+            onQuizQuestionChange={setQuizQuestion}
+            correctAnswer={correctAnswer}
+            onCorrectAnswerChange={setCorrectAnswer}
+            correctMessage={correctMessage}
+            onCorrectMessageChange={setCorrectMessage}
+            incorrectMessage={incorrectMessage}
+            onIncorrectMessageChange={setIncorrectMessage}
           />
         </div>
-        <div className="w-full md:w-2/3" style={{ backgroundImage: `url(${backgroundImage || ''})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="w-full md:w-2/3 flex flex-col gap-4">
+          {/* Area Testo Quiz */}
+          <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
+            <input 
+              type="text"
+              value={quizTitle}
+              onChange={(e) => setQuizTitle(e.target.value)}
+              placeholder="Titolo del Quiz"
+              className="w-full p-2 text-2xl bg-transparent border-b-2 border-gray-600 focus:border-cyan-500 outline-none text-white placeholder-gray-500"
+            />
+            <textarea
+              value={quizQuestion}
+              onChange={(e) => setQuizQuestion(e.target.value)}
+              placeholder="Scrivi qui la tua domanda..."
+              className="w-full p-2 mt-2 text-md bg-transparent focus:outline-none text-gray-300 placeholder-gray-500 resize-none"
+              rows={2}
+            />
+          </div>
+
+          {/* Tastierino */}
+          <div className="w-full h-full" style={{ backgroundImage: `url(${backgroundImage || ''})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
            <Keypad 
               keys={keys} 
               gridSize={gridSize} 
@@ -237,6 +310,7 @@ function App() {
               inputValue={inputValue}
               handleKeypadInput={handleKeypadInput}
             />
+          </div>
         </div>
       </main>
       

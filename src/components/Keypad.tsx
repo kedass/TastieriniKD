@@ -27,7 +27,7 @@ const Keypad: React.FC<KeypadProps> = ({ keys, gridSize, handleKeyClick, keypadT
   };
 
   return (
-    <div className="w-full max-w-4xl p-4 bg-gray-800 rounded-lg shadow-lg">
+    <div className="w-full max-w-4xl p-4 rounded-lg shadow-lg">
       {keypadType === 'inputBar' && (
         <div className="mb-4">
           <input
