@@ -35,7 +35,12 @@ const QuizViewer = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const data = urlParams.get('data');
       if (data) {
-        const compressed = Buffer.from(data, 'base64url');
+        // Ricostruisce il Base64 standard dal formato URL-safe
+        let base64 = data.replace(/-/g, '+').replace(/_/g, '/');
+        while (base64.length % 4) {
+          base64 += '=';
+        }
+        const compressed = Buffer.from(base64, 'base64');
         const jsonString = pako.inflate(compressed, { to: 'string' });
         const state = JSON.parse(jsonString);
         setQuizState(state);

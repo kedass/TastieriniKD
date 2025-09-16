@@ -239,7 +239,11 @@ const App = () => {
       };
       const jsonString = JSON.stringify(stateToSave);
       const compressed = pako.deflate(jsonString);
-      const encoded = Buffer.from(compressed).toString('base64url');
+      // Converte in Base64 e poi lo rende sicuro per gli URL manualmente
+      const encoded = Buffer.from(compressed).toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
 
       const url = `${window.location.origin}/view?data=${encoded}`;
       setGeneratedLink(url);
